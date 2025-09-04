@@ -232,7 +232,7 @@ func updateCumulativeScore(username string, score int, incrementDays bool) {
 // Fetch and send the leaderboard
 func sendLeaderboard(s *discordgo.Session, channelID string) {
 	// Query leaderboard data
-	rows, err := db.Query("SELECT username, score, days_played FROM leaderboard WHERE days_played > 0 ORDER BY (score * 1.0 / days_played) ASC, username ASC")
+	rows, err := db.Query("SELECT username, score, days_played FROM leaderboard WHERE days_played > 0 ORDER BY (score * 1.0 / days_played) ASC, days_played DESC, username ASC")
 	if err != nil {
 		fmt.Println("Error fetching leaderboard:", err)
 		return
