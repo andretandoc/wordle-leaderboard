@@ -158,7 +158,7 @@ func processWordleResultsMessage(message string, s *discordgo.Session, channelID
 // Helper method to clean and format usernames
 func cleanUsername(username string) string {
 	username = strings.TrimSpace(username)
-	username = strings.Trim(username, "@") // Remove leading "@" if present
+	username = strings.Trim(username, "@<>") // Remove leading "@" if present
 	return username
 }
 
@@ -254,8 +254,21 @@ func sendLeaderboard(s *discordgo.Session, channelID string) {
 		// Calculate the average score
 		averageScore := float64(totalScore) / float64(daysPlayed)
 
+		// Medals for top 3
+		var medal string
+		switch rank {
+		case 1:
+			medal = "🥇"
+		case 2:
+			medal = "🥈"
+		case 3:
+			medal = "🥉"
+		default:
+			medal = fmt.Sprintf("%d.", rank)
+		}
+
 		// Format the leaderboard entry
-		output += fmt.Sprintf("%d. <@%s - %.2f\n", rank, username, averageScore)
+		output += fmt.Sprintf("%s <@%s> - %.2f\n", medal, username, averageScore)
 		rank++
 	}
 
