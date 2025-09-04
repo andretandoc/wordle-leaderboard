@@ -101,7 +101,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			processWordleResultsMessage(m.Content, s, m.ChannelID)
 		}
 	} else {
-		fmt.Println("Message ignored. Not from Wordle #2092.")
+		if strings.Contains(strings.ToLower(m.Content), "results") {
+			fmt.Println("Message ignored. Not from Wordle #2092.")
+		}
 	}
 
 	// if strings.Contains(strings.ToLower(m.Content), "results") {
