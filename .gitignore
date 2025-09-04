@@ -1,0 +1,21 @@
+# Binaries and build output
+/bin/
+/*.exe
+/*.exe~
+/*.dll
+/*.so
+/*.dylib
+/*.test
+*.out
+
+# Go workspace files
+*.log
+
+# Dependency caches
+vendor/
+
+# Local database
+leaderboard.db
+
+# Environment variables
+.env
