@@ -104,7 +104,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		fmt.Println("Message ignored. Not from Wordle #2092.")
 	}
 
-	// Additional check: Look for "results" in the content
 	// if strings.Contains(strings.ToLower(m.Content), "results") {
 	// 	fmt.Printf("Processing results message from Wordle#2092: %s\n", m.Content)
 	// 	processWordleResultsMessage(m.Content, s, m.ChannelID)
@@ -256,7 +255,7 @@ func sendLeaderboard(s *discordgo.Session, channelID string) {
 		averageScore := float64(totalScore) / float64(daysPlayed)
 
 		// Format the leaderboard entry
-		output += fmt.Sprintf("%d. <@%s - %.2f (Days Played: %d)\n", rank, username, averageScore, daysPlayed)
+		output += fmt.Sprintf("%d. <@%s - %.2f\n", rank, username, averageScore)
 		rank++
 	}
 
