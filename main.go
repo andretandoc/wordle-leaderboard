@@ -230,59 +230,6 @@ func updateCumulativeScore(username string, score int, incrementDays bool) {
 	}
 }
 
-func saveDailyResultsToDatabase(results map[int][]string) {
-	for score, users := range results {
-		for _, user := range users {
-			// Insert or update score in the database for daily tracking
-			var exists bool
-			err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM leaderboard WHERE username=?)", user).Scan(&exists)
-			if err != nil {
-				fmt.Println("Error checking user existence:", err)
-				continue
-			}
-
-			if exists {
-				// Update score
-				_, err = db.Exec("UPDATE leaderboard SET score = ? WHERE username = ?", score, user)
-				if err != nil {
-					fmt.Println("Error updating score:", err)
-				}
-			} else {
-				// Insert new user
-				_, err = db.Exec("INSERT INTO leaderboard (username, score) VALUES (?, ?)", user, score)
-				if err != nil {
-					fmt.Println("Error inserting user:", err)
-				}
-			}
-		}
-	}
-}
-
-// Update the user's score in the database
-func updateDatabase(username string, score int) {
-	// Check if the user already exists in the leaderboard
-	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM leaderboard WHERE username=?)", username).Scan(&exists)
-	if err != nil {
-		fmt.Println("Error checking user existence:", err)
-		return
-	}
-
-	if exists {
-		// Update the user's score if they exist
-		_, err = db.Exec("UPDATE leaderboard SET score = ? WHERE username = ?", score, username)
-		if err != nil {
-			fmt.Println("Error updating score:", err)
-		}
-	} else {
-		// Insert new user into the leaderboard
-		_, err = db.Exec("INSERT INTO leaderboard (username, score) VALUES (?, ?)", username, score)
-		if err != nil {
-			fmt.Println("Error inserting user:", err)
-		}
-	}
-}
-
 // Fetch and send the leaderboard
 func sendLeaderboard(s *discordgo.Session, channelID string) {
 	// Query leaderboard data
