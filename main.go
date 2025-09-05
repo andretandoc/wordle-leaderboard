@@ -193,10 +193,8 @@ func updateScoresBasedOnResults(dailyUsers map[string]int) {
 
 	// Add 7-point penalties for users not in daily results
 	for user := range dbUsers {
-		if dbUsers[user] && user != "Dumb Ass Nigga" { // Skip excluded users
-			fmt.Printf("Adding penalty for %s (absent in daily results)\n", user)
-			updateCumulativeScore(user, 7, false) // Penalty without incrementing days
-		}
+		fmt.Printf("Adding penalty for %s (absent in daily results)\n", user)
+		updateCumulativeScore(user, 7, false) // Penalty without incrementing days
 	}
 }
 
