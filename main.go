@@ -93,23 +93,22 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Debug: Log the received message
 	fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
 
-	// Check if the sender is "Wordle#2092"
-	if m.Author.Username == "Wordle" && m.Author.Discriminator == "2092" {
-		// Additional check: Look for "results" in the content
-		if strings.Contains(strings.ToLower(m.Content), "results") {
-			fmt.Printf("Processing results message from Wordle#2092: %s\n", m.Content)
-			processWordleResultsMessage(m.Content, s, m.ChannelID)
-		}
-	} else {
-		if strings.Contains(strings.ToLower(m.Content), "results") {
-			fmt.Println("Message ignored. Not from Wordle #2092.")
-		}
-	}
-
-	// if strings.Contains(strings.ToLower(m.Content), "results") {
-	// 	fmt.Printf("Processing results message from Wordle#2092: %s\n", m.Content)
-	// 	processWordleResultsMessage(m.Content, s, m.ChannelID)
+	// if m.Author.Username == "Wordle" && m.Author.Discriminator == "2092" {
+	// 	// Additional check: Look for "results" in the content
+	// 	if strings.Contains(strings.ToLower(m.Content), "results") {
+	// 		fmt.Printf("Processing results message from Wordle#2092: %s\n", m.Content)
+	// 		processWordleResultsMessage(m.Content, s, m.ChannelID)
+	// 	}
+	// } else {
+	// 	if strings.Contains(strings.ToLower(m.Content), "results") {
+	// 		fmt.Println("Message ignored. Not from Wordle #2092.")
+	// 	}
 	// }
+
+	if strings.Contains(strings.ToLower(m.Content), "results") {
+		fmt.Printf("Processing results message from Wordle#2092: %s\n", m.Content)
+		processWordleResultsMessage(m.Content, s, m.ChannelID)
+	}
 }
 
 // Parse Wordle messages and update the database
@@ -192,9 +191,11 @@ func updateScoresBasedOnResults(dailyUsers map[string]int) {
 	}
 
 	// Add 7-point penalties for users not in daily results
-	for user := range dbUsers {
-		fmt.Printf("Adding penalty for %s (absent in daily results)\n", user)
-		updateCumulativeScore(user, 7, false) // Penalty without incrementing days
+	for user, present := range dbUsers {
+		if present {
+			fmt.Printf("Adding penalty for %s (absent in daily results)\n", user)
+			updateCumulativeScore(user, 7, false) // Penalty without incrementing days
+		}
 	}
 }
 
