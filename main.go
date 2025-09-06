@@ -241,21 +241,30 @@ func sendLeaderboard(s *discordgo.Session, channelID string) {
 	defer rows.Close()
 
 	output := "📊 **Wordle Leaderboard (Average Score)** 📊\n"
-	rank := 1
+
+	var (
+		rank     = 0    // current displayed rank
+		position = 0    // row index
+		prevAvg  = -1.0 // last average score
+	)
 
 	for rows.Next() {
 		var username string
 		var totalScore, daysPlayed int
-		err := rows.Scan(&username, &totalScore, &daysPlayed)
-		if err != nil {
+		if err := rows.Scan(&username, &totalScore, &daysPlayed); err != nil {
 			fmt.Println("Error scanning leaderboard row:", err)
 			continue
 		}
 
-		// Calculate the average score
 		averageScore := float64(totalScore) / float64(daysPlayed)
+		position++
 
-		// Medals for top 3
+		// If this score is different from the previous one, update rank to *position*
+		if averageScore != prevAvg {
+			rank = position
+			prevAvg = averageScore
+		}
+
 		var medal string
 		switch rank {
 		case 1:
@@ -268,13 +277,11 @@ func sendLeaderboard(s *discordgo.Session, channelID string) {
 			medal = fmt.Sprintf("%d.", rank)
 		}
 
-		// Format the leaderboard entry
 		output += fmt.Sprintf("%s <@%s> - %.2f\n", medal, username, averageScore)
-		rank++
 	}
 
 	// If no rows are found, notify the channel
-	if rank == 1 {
+	if position == 0 {
 		output += "No results available yet!"
 	}
 
